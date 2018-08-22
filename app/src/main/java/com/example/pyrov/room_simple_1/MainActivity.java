@@ -40,11 +40,16 @@ public class MainActivity extends AppCompatActivity {
         employee.setFirstName("John");
         employee.setLastName("Smith");
         employee.setSalary(10000);
+        List<String> hobby = new ArrayList<>();
+        hobby.add("cats");
+        hobby.add("dogs");
+        employee.setHobbies(hobby);
         Address address = new Address();
         address.setCity("London");
         address.setStreet("Baker Street");
         address.setNumber(221);
         employee.setAddress(address);
+
 
         Completable.fromAction(new Action() {
             @Override
@@ -62,16 +67,30 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onComplete() {
                         log("onComplete");
+                        printDbData();
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        log("onError " + e.getLocalizedMessage());
+                        StackTraceElement[] elements = e.getStackTrace();
+                        log("onError");
+                        for (int i = 0; i < elements.length; i++) {
+                            log(elements[i].toString());
+                        }
                     }
                 });
 
 //        employeeDao.insert(employee);
 
+
+    }
+
+    private void log(String s) {
+        Log.i("MyTAG", s);
+    }
+
+    @SuppressLint("CheckResult")
+    private void printDbData() {
         List<Employee> list = new ArrayList<>();
 
         employeeDao.getAll().subscribeOn(Schedulers.io())
@@ -79,25 +98,22 @@ public class MainActivity extends AppCompatActivity {
                 .subscribe(new Consumer<List<Employee>>() {
                     @Override
                     public void accept(List<Employee> employees) throws Exception {
-                        Collections.copy(list, employees);
+                        list.addAll(employees);
+                        log("Success");
+
+                        for (int i = 0; i < list.size(); i++) {
+                            Employee myEmployee = list.get(i);
+                            Address myEmployeeAddress = myEmployee.getAddress();
+                            log(myEmployee.getFirstName());
+                            log(myEmployee.getLastName());
+                            log(String.valueOf(myEmployee.getSalary()));
+                            log(myEmployeeAddress.getCity());
+                            log(myEmployeeAddress.getStreet());
+                            log(String.valueOf(myEmployeeAddress.getNumber()));
+                        }
                     }
                 });
 
-        for (int i = 0; i < list.size(); i++) {
-            Employee myEmployee = list.get(i);
-            Address myEmployeeAddress = myEmployee.getAddress();
-            log(myEmployee.getFirstName());
-            log(myEmployee.getLastName());
-            log(String.valueOf(myEmployee.getSalary()));
-            log(myEmployeeAddress.getCity());
-            log(myEmployeeAddress.getStreet());
-            log(String.valueOf(myEmployeeAddress.getNumber()));
-        }
+
     }
-
-    private void log(String s) {
-        Log.i("MyTAG", s);
-    }
-
-
 }
