@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.example.pyrov.room_simple_1.db.AppDatabase;
-import com.example.pyrov.room_simple_1.db.EmployeeCarDao;
 import com.example.pyrov.room_simple_1.db.EmployeeDao;
 import com.example.pyrov.room_simple_1.model.Address;
 import com.example.pyrov.room_simple_1.model.Employee;
@@ -17,7 +16,6 @@ import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
@@ -68,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(Throwable e) {
-                        log("onError " + e.getMessage());
+                        log("onError " + e.getLocalizedMessage());
                     }
                 });
 
